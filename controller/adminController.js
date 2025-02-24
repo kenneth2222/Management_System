@@ -157,7 +157,6 @@ exports.verifyMail = async (req, res) => {
 
 
 
-
 exports.updateStudent = async (req, res) =>{
     try{
         const {id} = req.params;
@@ -207,5 +206,4 @@ exports.updateTeacher = async (req, res) =>{
         })
     }
 }
-
 
