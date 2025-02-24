@@ -122,6 +122,8 @@ exports.createAdmin = async (req, res)=>{
         // console.log(req);
         const {fullName, password, email, phoneNumber, } =req.body
 
+        
+
         const hash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
 // Store hash in your password DB.
@@ -133,6 +135,12 @@ exports.createAdmin = async (req, res)=>{
         }
         
         const newData = await adminModel.create(data);
+
+        if(newData.isAdmin == true){
+            return res.status(400).json({message: "Already An Admin"})
+           }
+
+           await newData.updateOne({ isAdmin: true });
 
         //The word "secret_key" is self-defined, actually hidden in the .env file
         const token = await jwt.sign({id:newData._id}, secret_key, {expiresIn: '15mins'})
