@@ -208,4 +208,30 @@ exports.updateTeacher = async (req, res) =>{
     }
 }
 
+exports.getAllStudents = async (req, res) => {
+    try {
+        const allStudents = await studentModel.find()
+        res.status(200).json({
+            message: `All Students in database`,
+            data: allStudents
+        })
+    } catch (error) {
+        res.status(500).json({
+           message:error.message 
+        })
+    }
+} 
 
+exports.getAllTeachers = async (req, res) => {
+    try {
+        const allTeachers = await teacherModel.find()
+        res.status(200).json({
+            message: `All Teachers in database`,
+            data: allTeachers
+        })
+    } catch (error) {
+        res.status(500).json({
+           message:error.message 
+        })
+    }
+}
