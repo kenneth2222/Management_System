@@ -4,7 +4,7 @@ const DATABASE_URL = process.env.DATABASE_URL;
 const mongoose = require("mongoose");
 const studentRouter = require("./route/studentRouter");
 const adminRouter = require("./route/adminRouter");
-const multer = require ('multer')
+
 
 const app = express();
 const PORT = 9090;

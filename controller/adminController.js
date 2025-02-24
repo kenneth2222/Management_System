@@ -148,36 +148,6 @@ exports.createAdmin = async (req, res)=>{
     }
 }
 
-exports.createAdmin = async (req, res)=>{
-    try {
-        // console.log(req);
-        const {fullName, password, email, phoneNumber, } =req.body
-
-        const hash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-
-// Store hash in your password DB.
-        const data = {
-            fullName,
-            password: hash,
-            email: email.toLowerCase(), 
-            phoneNumber
-        }
-        
-        const newData = await adminModel.create(data);
-
-        //The word "secret_key" is self-defined, actually hidden in the .env file
-        const token = await jwt.sign({id:newData._id}, secret_key, {expiresIn: '15mins'})
-     return res.status(201).json({
-            message: "New Admin Created Successfully",
-            data: newData
-        })
-
-    } catch(error) {
-     res.status(500).json({
-        message: error.message
-     })   
-    }
-}
 
 exports.userLogin = async (req, res) => {
     try {
@@ -196,7 +166,7 @@ exports.userLogin = async (req, res) => {
             userRole = 'Student';
         }
 
-        // If no user is found
+        
         if (!user) {
             return res.status(404).json({
                 message: "Email not found"
@@ -211,17 +181,16 @@ exports.userLogin = async (req, res) => {
             });
         }
 
-        // Check if the email is verified
+        
         if (!user.isVerified) {
             return res.status(403).json({
                 message: "Email not Verified"
             });
         }
 
-        // Generate JWT token
         const token = await jwt.sign({ id: user._id }, secret_key, { expiresIn: '24h' });
 
-        // Prepare the response data
+        
         const { password, ...userData } = user._doc;
 
         return res.status(200).json({
@@ -356,7 +325,6 @@ exports.updateTeacher = async (req, res) =>{
                 message: "Teacher Not Found"
             })
         }
-
 
         const teacherUpdate = await teacherModel.findByIdAndUpdate(id, req.body, {new: true})
         return res.status(200).json({
