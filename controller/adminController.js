@@ -122,7 +122,7 @@ exports.createAdmin = async (req, res)=>{
         // console.log(req);
         const {fullName, password, email, phoneNumber, } =req.body
 
-        
+
 
         const hash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
@@ -134,13 +134,13 @@ exports.createAdmin = async (req, res)=>{
             phoneNumber
         }
         
-        const newData = await adminModel.create(data);
+        // const newData = await adminModel.create(data);
 
-        if(newData.isAdmin == true){
-            return res.status(400).json({message: "Already An Admin"})
-           }
+        // if(newData.isAdmin == true){
+        //     return res.status(400).json({message: "Already An Admin"})
+        //    }
 
-           await newData.updateOne({ isAdmin: true });
+        //    await newData.updateOne({ isAdmin: true });
 
         //The word "secret_key" is self-defined, actually hidden in the .env file
         const token = await jwt.sign({id:newData._id}, secret_key, {expiresIn: '15mins'})
@@ -254,11 +254,15 @@ exports.verifyMail = async (req, res) => {
         });
     }
 
+    if(userRole == 'Teacher' && user.isAdmin !== true){
+        await user.updateOne({ isAdmin: true });
+        await user.updateOne({ isVerified: true });
+       }
 
-     await user.updateOne({ isVerified: true });
+    //  await user.updateOne({ isVerified: true });
         // const verifyingMail = await user.findByIdAndUpdate(id, {isVerified:true})
         res.status(200).json({
-            message: `${userRole} email verified successfully`
+            message: `${userRole} email verified successfully as an Admin`
         })
     }catch(error){
         console.error(error.message);
