@@ -309,7 +309,7 @@ exports.getAllTeachers = async (req, res) => {
     try {
         const allTeachers = await teacherModel.find()
         res.status(200).json({
-            message: `All Teachers in database`,
+            message: `All Teachers available in database`,
             data: allTeachers
         })
     } catch (error) {
