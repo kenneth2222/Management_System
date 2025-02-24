@@ -27,6 +27,9 @@ exports.checkRole = async (req, res, next) => {
     const checkAdmin = await adminModel.findById(tokenOwner.id)
     const checkTeacher = await teacherModel.findById(tokenOwner.id)
 
+    console.log(checkAdmin, `I am Admin`)
+    console.log(checkTeacher, `I am a Teacher`)
+
     if(!checkAdmin || !checkTeacher){
         return res.status(404).json({
             message: "Admin or Teacher Not Found"

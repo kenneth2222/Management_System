@@ -221,6 +221,8 @@ exports.verifyMail = async (req, res) => {
         let user;
         let userRole;
 
+        console.log(user);
+
         // const checkuser = await schoolModel.findById( id )
         if(await adminModel.findById(id)){
             user = await adminModel.findById(id);
