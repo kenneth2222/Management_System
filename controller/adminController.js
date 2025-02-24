@@ -9,7 +9,144 @@ const bcrypt = require('bcryptjs');
 const secret_key = process.env.JWT_SECRET;
 
 
+exports.createStudent = async (req, res)=>{
+    try {
+        
+        const {fullName, gender, password, email, phoneNumber, } =req.body
 
+        if(!fullName || !gender || !password || !email || !phoneNumber){
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const checkUser = await studentModel.findOne({email: email.toLowerCase()})
+        if(checkUser){
+            return res.status(400).json({
+                message: "Student Already Exists"
+            })
+        }
+        
+      
+        const hash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+
+
+
+        const data = {
+            fullName,
+            gender,
+            password: hash,
+            email: email.toLowerCase(), 
+            phoneNumber
+        }
+    
+
+        const newData = await studentModel.create(data);
+
+        //The word "secret_key" is self-defined, actually hidden in the .env file
+        const token = await jwt.sign({id:newData._id}, secret_key, {expiresIn: '30m'})
+        // console.log(token)
+        const link = `${req.protocol}://${req.get('host')}/mail/${newData._id}/${token}`
+        //console.log(link)
+        const subject = "Welcome" + " " + fullName;
+        const text = `Welcome ${newData.fullName}, Kindly use this link to verify your email ${link}`;
+        await sendMail({ subject: subject, email: newData.email, html:signUp(link, newData.fullName) })
+            return res.status(201).json({
+            message: "New Student Created Successfully",
+            data: newData
+        })
+
+    } catch(error) {
+     res.status(500).json({
+        message: error.message
+     })   
+    }
+}
+
+exports.createTeacher = async (req, res)=>{
+    try {
+        // console.log(req);
+        const {fullName, password, email } =req.body
+
+        if(!fullName || !password || !email ){
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const checkUser = await teacherModel.findOne({email: email.toLowerCase()})
+        if(checkUser){
+            return res.status(400).json({
+                message: "Teacher Already Exists"
+            })
+        }
+        
+        
+
+        const hash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+
+
+// Store hash in your password DB.
+        const data = {
+            fullName,
+            password: hash,
+            email: email.toLowerCase(), 
+        }
+        
+        
+
+        const newData = await teacherModel.create(data);
+
+        //The word "secret_key" is self-defined, actually hidden in the .env file
+        const token = await jwt.sign({id:newData._id}, secret_key, {expiresIn: '15m'})
+        // console.log(token)
+        const link = `${req.protocol}://${req.get('host')}/mail/${newData._id}/${token}`
+        //console.log(link)
+        const subject = "Welcome" + " " + fullName;
+        const text = `Welcome ${newData.fullName}, Kindly use this link to verify your email ${link}`;
+        await sendMail({ subject: subject, email: newData.email, html:signUp(link, newData.fullName) })
+            return res.status(201).json({
+            message: "New Teacher Created Successfully",
+            data: newData
+        })
+
+    } catch(error) {
+     res.status(500).json({
+        message: error.message
+     })   
+    }
+}
+
+exports.createAdmin = async (req, res)=>{
+    try {
+        // console.log(req);
+        const {fullName, password, email, phoneNumber, } =req.body
+
+        const hash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+
+// Store hash in your password DB.
+        const data = {
+            fullName,
+            password: hash,
+            email: email.toLowerCase(), 
+            phoneNumber
+        }
+        
+        const newData = await adminModel.create(data);
+
+        //The word "secret_key" is self-defined, actually hidden in the .env file
+        const token = await jwt.sign({id:newData._id}, secret_key, {expiresIn: '15mins'})
+     return res.status(201).json({
+            message: "New Admin Created Successfully",
+            data: newData
+        })
+
+    } catch(error) {
+     res.status(500).json({
+        message: error.message
+     })   
+    }
+}
 
 exports.createAdmin = async (req, res)=>{
     try {

@@ -1,7 +1,7 @@
 const adminRouter = require ('express').Router()
 
 const {createStudent, createAdmin, userLogin, createTeacher, getAllTeachers, getAllStudents, updateStudent, updateTeacher, deleteTeacher, deleteStudent, verifyMail} = require ('../controller/adminController');
-// const {checkRole, adminRole} = require('../middleware/authorization')
+const {checkRole, adminRole} = require('../middleware/authorization')
 
 
 
